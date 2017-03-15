@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chat room</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<style type="text/css">
+		body {
+			margin-top:30px;
+		}
+		.chat_list {
+			height: 200px;
+			overflow-y:auto;
+			border: 1px solid grey;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+				<h1>Users</h1>
+				<ul id="userlist">
+					
+				</ul>
+			</div>
+			<div class="col-md-8">
+				<div class="chat_list" style=""> </div><br>
+				<form method="post" id="chatform">
+					<div class="form-group">
+						<textarea class="form-control" placeholder="Enter messsage" id="message"></textarea><br />
+						<input type="submit" name="send_chat" value="Send Message" class="btn btn-primary">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	$(function() {
+		var socket = io.connect();
+		var $message = $("[name=send_chat]");
+		var $chat = $("#message");
+		var $chat_list = $(".chat_list");
+		var $form = $("#chatform");
+		$form.submit(function(e) {
+			socket.emit('send message', $chat.val());
+			$chat.val('');
+			e.preventDefault();
+		});
+		socket.on('new message', function(data) {
+			$chat_list.append(data.msg+"<br>");
+		});	
+	});
+</script>
